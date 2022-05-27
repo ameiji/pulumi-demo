@@ -1,7 +1,11 @@
+import pulumi
 from pulumi_aws import config, iam
 import json
 
-## EKS Cluster Role
+# EKS Cluster Role
+
+pulumi_config = pulumi.Config('aws')
+default_boundary = pulumi_config.require('default_boundary_arn')
 
 eks_role = iam.Role(
     'eks-iam-role',
@@ -18,6 +22,7 @@ eks_role = iam.Role(
             }
         ],
     }),
+    permissions_boundary=default_boundary,
 )
 
 iam.RolePolicyAttachment(
@@ -33,7 +38,7 @@ iam.RolePolicyAttachment(
     policy_arn='arn:aws:iam::aws:policy/AmazonEKSClusterPolicy',
 )
 
-## Ec2 NodeGroup Role
+# Ec2 NodeGroup Role
 
 ec2_role = iam.Role(
     'ec2-nodegroup-iam-role',
@@ -50,6 +55,7 @@ ec2_role = iam.Role(
             }
         ],
     }),
+    permissions_boundary=default_boundary,
 )
 
 iam.RolePolicyAttachment(
