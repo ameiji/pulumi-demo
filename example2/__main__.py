@@ -1,14 +1,16 @@
-import app
+from app import App
 import iam
 import vpc
 import utils
 import pulumi
 from pulumi_aws import eks
+import pulumi_kubernetes as k8s
 
-
-app_name = "nginx"
-app_labels = { "app": app_name }
-## EKS Cluster
+config = pulumi.Config('app')
+app_name = config.require('name')
+app_image = config.require('image')
+app_labels = {"app": app_name}
+# EKS Cluster
 
 eks_cluster = eks.Cluster(
     'eks-cluster',
@@ -44,6 +46,10 @@ dependency_list = [
     eks_node_group,
 ]
 
-app.create_deployment(app_name, app_labels, dependenc
+kubeconfig = utils.generate_kube_config(eks_cluster)
+k8s_provider = k8s.Provider('k8s_provider', kubeconfig=kubeconfig)
+app = App(app_name, app_labels, app_image, dependency_list, k8s_provider)
+
 pulumi.export('cluster-name', eks_cluster.name)
-pulumi.export('kubeconfig', utils.generate_kube_config(eks_cluster))
+pulumi.export('kubeconfig', kubeconfig)
+app.export()
