@@ -1,8 +1,8 @@
 import json
 import pulumi
 
-def generate_kube_config(eks_cluster):
 
+def generate_kube_config(eks_cluster) -> pulumi.Output:
     kubeconfig = pulumi.Output.all(eks_cluster.endpoint, eks_cluster.certificate_authority.apply(lambda v: v.data), eks_cluster.name).apply(lambda args: json.dumps({
         "apiVersion": "v1",
         "clusters": [{

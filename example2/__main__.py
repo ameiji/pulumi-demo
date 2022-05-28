@@ -46,7 +46,8 @@ dependency_list = [
     eks_node_group,
 ]
 
-kubeconfig =  pulumi.Output.concat(utils.generate_kube_config(eks_cluster), " ")
+kubeconfig = utils.generate_kube_config(eks_cluster).apply(lambda kube_config: kube_config + " ")
+
 k8s_provider = k8s.Provider('k8s_provider', kubeconfig=kubeconfig)
 app = App(app_name, app_labels, app_image, dependency_list, k8s_provider)
 
