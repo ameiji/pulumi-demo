@@ -3,6 +3,7 @@ import iam
 import vpc
 import utils
 import pulumi
+import yaml
 from pulumi_aws import eks
 import pulumi_kubernetes as k8s
 
@@ -47,10 +48,12 @@ dependency_list = [
 ]
 
 kubeconfig = utils.generate_kube_config(eks_cluster).apply(lambda kube_config: kube_config + " ")
+kubeconfig_yaml = yaml.dump(kubeconfig)
 
 k8s_provider = k8s.Provider('k8s_provider', kubeconfig=kubeconfig)
 app = App(app_name, app_labels, app_image, dependency_list, k8s_provider)
 
 pulumi.export('cluster-name', eks_cluster.name)
 pulumi.export('kubeconfig', kubeconfig)
+pulumi.export('kubeconfig', kubeconfig_yaml)
 app.export()
