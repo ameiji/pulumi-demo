@@ -48,9 +48,9 @@ dependency_list = [
 ]
 
 kubeconfig = utils.generate_kube_config(eks_cluster).apply(lambda kube_config: kube_config + " ")
-kubeconfig_yaml = yaml.dump(kubeconfig)
+kubeconfig_yaml = utils.generate_kube_config_yaml(eks_cluster).apply(lambda kube_config: kube_config + " ")
 
-k8s_provider = k8s.Provider('k8s_provider', kubeconfig=kubeconfig)
+k8s_provider = k8s.Provider('k8s_provider', kubeconfig=kubeconfig_yaml)
 app = App(app_name, app_labels, app_image, dependency_list, k8s_provider)
 
 pulumi.export('cluster-name', eks_cluster.name)
