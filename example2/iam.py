@@ -4,7 +4,7 @@ import json
 
 # EKS Cluster Role
 
-pulumi_config = pulumi.Config('aws')
+pulumi_config = pulumi.Config('aws_opts')
 default_boundary = pulumi_config.require('default_boundary_arn')
 
 eks_role = iam.Role(
@@ -40,7 +40,26 @@ iam.RolePolicyAttachment(
 
 # Ec2 NodeGroup Role
 
-ng_role_args = iam.RoleArgs(assume_role_policy=json.dumps({
+# ng_role_args = iam.RoleArgs(assume_role_policy=json.dumps({
+#         'Version': '2012-10-17',
+#         'Statement': [
+#             {
+#                 'Action': 'sts:AssumeRole',
+#                 'Principal': {
+#                     'Service': 'ec2.amazonaws.com'
+#                 },
+#                 'Effect': 'Allow',
+#                 'Sid': ''
+#             }
+#         ],
+#     }),
+#     permissions_boundary=default_boundary)
+
+
+ec2_role = iam.Role(
+    'ec2-nodegroup-iam-role',
+    # args=ng_role_args,
+    assume_role_policy=json.dumps({
         'Version': '2012-10-17',
         'Statement': [
             {
@@ -53,26 +72,7 @@ ng_role_args = iam.RoleArgs(assume_role_policy=json.dumps({
             }
         ],
     }),
-    permissions_boundary=default_boundary)
-
-
-ec2_role = iam.Role(
-    'ec2-nodegroup-iam-role',
-    args=ng_role_args,
-    # assume_role_policy=json.dumps({
-    #     'Version': '2012-10-17',
-    #     'Statement': [
-    #         {
-    #             'Action': 'sts:AssumeRole',
-    #             'Principal': {
-    #                 'Service': 'ec2.amazonaws.com'
-    #             },
-    #             'Effect': 'Allow',
-    #             'Sid': ''
-    #         }
-    #     ],
-    # }),
-    # permissions_boundary=default_boundary,
+    permissions_boundary=default_boundary,
 )
 
 iam.RolePolicyAttachment(
