@@ -27,7 +27,7 @@ def generate_kube_config(eks_cluster) -> pulumi.Output:
             "user": {
                 "exec": {
                     "apiVersion": "client.authentication.k8s.io/v1alpha1",
-                    "command": "aws-iam-authenticator",
+                    "command": "aws",
                     "args": [
                         "eks",
                         "get-token",
@@ -65,7 +65,7 @@ def generate_kube_config_yaml(eks_cluster) -> pulumi.Output:
             "user": {
                 "exec": {
                     "apiVersion": "client.authentication.k8s.io/v1alpha1",
-                    "command": "aws-iam-authenticator",
+                    "command": "aws",
                     "args": [
                         "eks",
                         "get-token",
