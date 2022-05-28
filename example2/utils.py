@@ -30,7 +30,7 @@ def generate_kube_config(eks_cluster) -> pulumi.Output:
                     "command": "aws-iam-authenticator",
                     "args": [
                         "eks",
-                        "get_token",
+                        "get-token",
                         "--cluster-name",
                         args[2],
                     ],
@@ -68,7 +68,7 @@ def generate_kube_config_yaml(eks_cluster) -> pulumi.Output:
                     "command": "aws-iam-authenticator",
                     "args": [
                         "eks",
-                        "get_token",
+                        "get-token",
                         "--cluster-name",
                         args[2],
                     ],

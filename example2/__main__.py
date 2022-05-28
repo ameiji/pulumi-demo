@@ -3,7 +3,6 @@ import iam
 import vpc
 import utils
 import pulumi
-import yaml
 from pulumi_aws import eks
 import pulumi_kubernetes as k8s
 
