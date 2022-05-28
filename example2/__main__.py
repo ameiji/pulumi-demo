@@ -46,13 +46,11 @@ dependency_list = [
     eks_node_group,
 ]
 
-kubeconfig = utils.generate_kube_config(eks_cluster).apply(lambda kube_config: kube_config + " ")
-kubeconfig_yaml = utils.generate_kube_config_yaml(eks_cluster).apply(lambda kube_config: kube_config + " ")
+kubeconfig = utils.generate_kube_config(eks_cluster)
 
-k8s_provider = k8s.Provider('k8s_provider', kubeconfig=kubeconfig_yaml)
+k8s_provider = k8s.Provider('k8s_provider', kubeconfig=kubeconfig)
 app = App(app_name, app_labels, app_image, dependency_list, k8s_provider)
 
 pulumi.export('cluster-name', eks_cluster.name)
 pulumi.export('kubeconfig', kubeconfig)
-pulumi.export('kubeconfig', kubeconfig_yaml)
-app.export()
+pulumi.export("frontend_IP", app.service.status.apply(lambda s: s.load_balancer.ingress[0].ip))
