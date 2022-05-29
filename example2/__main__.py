@@ -9,6 +9,7 @@ import pulumi_kubernetes as k8s
 config = pulumi.Config('app')
 app_name = config.require('name')
 app_image = config.require('image')
+app_enable = config.require('enable')
 app_labels = {"app": app_name}
 # EKS Cluster
 
@@ -49,8 +50,10 @@ dependency_list = [
 kubeconfig = utils.generate_kube_config(eks_cluster)
 
 k8s_provider = k8s.Provider('k8s_provider', kubeconfig=kubeconfig)
-app = App(app_name, app_labels, app_image, dependency_list, k8s_provider)
+
+if app_enable == 'true':
+    app = App(app_name, app_labels, app_image, dependency_list, k8s_provider)
 
 pulumi.export('cluster-name', eks_cluster.name)
 pulumi.export('kubeconfig', kubeconfig)
-pulumi.export("frontend_IP", app.service.status.apply(lambda s: s.load_balancer.ingress[0].ip))
+# pulumi.export("frontend_IP", app.service.status.apply(lambda s: s.load_balancer.ingress[0].ip))
